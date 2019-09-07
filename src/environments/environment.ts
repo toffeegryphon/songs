@@ -6,6 +6,9 @@ export const environment = {
   production: false
 };
 
+export const root = (query:string, limit:number = 3, offset:number = 0) => 
+  `https://musicbrainz.org/ws/2/artist?query=${query}?limit=${limit}?offset=${offset}`;
+
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
