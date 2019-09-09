@@ -2,9 +2,6 @@ import { Component } from '@angular/core';
 import { FindService } from './search.service';
 import { CleanService } from './clean.service';
 
-import { expand, map, reduce, concat, mergeMap } from 'rxjs/operators'
-import { pipe, merge } from 'rxjs';
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -26,10 +23,10 @@ export class AppComponent {
     console.log(this.dirty);
     let cleaned = this.cleanService.clean(this.dirty['artists'][0]);
     // this.findService.findRecordings(cleaned['id']).subscribe(val => this.clean(val));
-    this.findService.findRecordings(cleaned['id']).subscribe(val => console.log(val));
+    this.findService.findRecordings(cleaned['id']).subscribe(val => this.clean(val));
   }
 
-  clean(val: JSON) {
+  clean(val: Array<Object>) {
     console.log(val)
     this.cleanService.recordings(val);
   }

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { isUndefined } from 'util';
 
 @Injectable({
   providedIn: 'root'
@@ -19,23 +20,28 @@ export class CleanService {
     return cleaned;
   }
 
-  recordings(dirty: JSON): any {
+  recordings(dirty: Array<Object>): any {
 
-    let results: Array<Object>;
+    // O(n)
+    // TODO include which albums they are in
+    let results: Array<Object> = new Array(dirty.length); // At most equal length
+    let set: Set<string> = new Set();
 
-    let recording = dirty['recordings'][0];
-    let title: String = recording['title'].replace(/\(.*\)/g, '');
-    console.log(title);
-
-    //TODO If after clean title is empty delete entry
-
-    // dirty['recordings'].forEach(recording => {
-    //   let title: String = recording['title'].replace(/\(.*\)/g, '');
-    //   console.log()
-    //   let cleaned: Object = {
-    //     'id' : recording['id'],
-    //     'title' : recording['title'],
-    //   }
-    // });
+    results = dirty.map(recording => {
+      let title: string = recording['title'].replace(/\(.*\)/g, '').trim();
+      let code: string = title.toLowerCase().replace(/\[.*\]/g, '').replace(/\{.*\}/g, '').replace(/[^\w]/g, '');
+      console.log(code);
+      console.log(set.has(code));
+      if (!set.has(code)) {
+        set.add(code);
+        let cleaned: Object = {
+          'id'    : recording['id'],
+          'title' : title,
+          'code'  : code,
+        };
+        return cleaned;
+      }
+    }).filter( recording => !isUndefined(recording));
+    console.log(results);
   }
 }
