@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Observable } from 'rxjs';
+import { expand, map, reduce } from 'rxjs/operators'
 
 const searchArtists = (query: string, limit: number = 3, offset: number = 0) => 
   `https://musicbrainz.org/ws/2/artist?query=${query}&limit=${limit}&offset=${offset}`;
@@ -26,23 +27,23 @@ export class FindService {
     return this.http.get<JSON>(searchArtists(query), httpOptions);
   }
 
-  //TODO async: Find and clean page by page. Once page done, add to template
-  async findRecordings(id: string, offset:number = 0, recordings: Array<JSON> = []) {
-    this.http.get<JSON>(searchRecordings(id, 100, offset), httpOptions).subscribe( result => this.check(result, id, recordings));
+  // TODO async: Find and clean page by page. Once page done, add to template
+
+  findRecordings(id: string): Observable<any> {
+    return this.getRecordings(id).pipe(
+      expand(result => {
+        if (result['recording-offset'] + 100 < result['recording-count']) {
+          return this.getRecordings(id, result['recording-offset'] + 100)
+        } else {
+          return []
+        }
+      })).pipe(
+      map(result => result['recordings'])).pipe(
+      reduce((acc: Array<Object>, result: Array<Object>) => acc.concat(result), [])
+    )
   }
 
-  private async check(result: JSON, id: string, recordings: Array<JSON>): Promise<Array<JSON>> {
-    recordings.push(...result['recordings']);
-    console.log(recordings);
-
-    let count: number = result['recording-count'];
-    console.log(count);
-    console.log(result['recording-offset']);
-
-    if (result['recording-offset'] + 100 < result['recording-count']) {
-      this.findRecordings(id, result['recording-offset'] + 100, recordings)
-    } else {
-      return recordings;
-    }
+  getRecordings(id: string, offset:number = 0, recordings: Array<JSON> = []) {
+    return this.http.get<JSON>(searchRecordings(id, 100, offset), httpOptions);
   }
 }
