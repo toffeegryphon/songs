@@ -30,8 +30,6 @@ export class CleanService {
     results = dirty.map(recording => {
       let title: string = recording['title'].replace(/\(.*\)/g, '').trim();
       let code: string = title.toLowerCase().replace(/\[.*\]/g, '').replace(/\{.*\}/g, '').replace(/[^\w]/g, '');
-      console.log(code);
-      console.log(set.has(code));
       if (!set.has(code)) {
         set.add(code);
         let cleaned: Object = {
