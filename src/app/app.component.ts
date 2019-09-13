@@ -18,8 +18,11 @@ export class AppComponent {
   title: string = 'songs2';
   dirty: JSON;
 
+  artistId: string;
+  artists: AngularFirestoreCollection = this.db.collection('artists');
+
   constructor(private searchService: SearchService, private cleanService: CleanService, private db: AngularFirestore) {
-    searchService.findArtists('dua lipa').subscribe(val => this.save(val));
+    // searchService.findArtists('dua lipa').subscribe(val => this.save(val));
 
     let recordings$: Observable<Object[]> = searchService.findArtists('dua lipa').pipe(switchMap(artists => this.save(artists)));
     recordings$.subscribe(recordings => this.clean(recordings));
@@ -28,12 +31,12 @@ export class AppComponent {
   save(val: JSON) {
     this.dirty = val;
     console.log(this.dirty);
-    let cleaned = this.cleanService.clean(this.dirty['artists'][0]);
+    let cleaned = this.cleanService.artist(this.dirty['artists'][0]);
+    this.artistId = cleaned['id'];
 
-    let artists: AngularFirestoreCollection = this.db.collection('artists');
-    artists.doc(cleaned['id']).get().subscribe(doc => {
+    this.artists.doc(cleaned['id']).get().subscribe(doc => {
       if (!doc.exists) {
-        artists.doc(cleaned['id']).set(cleaned);
+        this.artists.doc(cleaned['id']).set(cleaned);
       }
     });
 
@@ -42,6 +45,23 @@ export class AppComponent {
 
   clean(val: Object[]) {
     console.log(val)
-    this.cleanService.recordings(val);
+    let cleaned: Object[] = this.cleanService.recordings(val);
+    let recording: Object[];
+    let artist$: Observable<any> = this.artists.doc(this.artistId).get();
+    artist$.subscribe(doc => {
+      if (doc.exists) {
+        let artist = doc.data();
+        recording = artist.recordings;
+        console.log(artist);
+        console.log(artist.recordings)
+        if (recording == null) {
+          console.log('null');
+          artist.recordings = cleaned;
+          this.artists.doc(this.artistId).update({
+            'recordings' : cleaned
+          });
+        }
+      }
+    })
   }
 }

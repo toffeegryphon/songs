@@ -8,7 +8,8 @@ export class CleanService {
 
   constructor() { }
 
-  clean(dirty: JSON): Object {
+  // Clean up artist JSON to return artist object with only required fields.
+  artist(dirty: JSON): Object {
     console.log(dirty);
 
     let cleaned = {
@@ -20,14 +21,15 @@ export class CleanService {
     return cleaned;
   }
 
+  // Clean up recordings array to return recordings array with only required fields and sorted in order
   recordings(dirty: Array<Object>): any {
+    
+    let results: Array<Object> = new Array(dirty.length); // At most equal length
+    let set: Set<string> = new Set();
 
     // O(n)
     // TODO include which albums they are in
     // TODO select songs, result which album(s) to buy
-    let results: Array<Object> = new Array(dirty.length); // At most equal length
-    let set: Set<string> = new Set();
-
     results = dirty.map(recording => {
       let title: string = recording['title'].replace(/\(.*\)/g, '').trim();
       let code: string = title.toLowerCase().replace(/\[.*\]/g, '').replace(/\{.*\}/g, '').replace(/[^\w]/g, '');
@@ -41,6 +43,10 @@ export class CleanService {
         return cleaned;
       }
     }).filter( recording => !isUndefined(recording));
-    console.log(results);
+
+    // Use a better sort function
+    results.sort((a, b) => (a['code'] > b['code']) ? 1 : -1);
+
+    return results;
   }
 }
