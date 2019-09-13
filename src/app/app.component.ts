@@ -1,14 +1,16 @@
 import { Component } from '@angular/core';
-import { FindService } from './search.service';
+import { SearchService } from './search.service';
 import { CleanService } from './clean.service';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.sass'],
   providers: [
-    FindService, 
+    SearchService, 
     CleanService]
 })
 
@@ -16,8 +18,11 @@ export class AppComponent {
   title: string = 'songs2';
   dirty: JSON;
 
-  constructor(private findService: FindService, private cleanService: CleanService, private db: AngularFirestore) {
-    findService.findArtists('dua lipa').subscribe(val => this.save(val))
+  constructor(private searchService: SearchService, private cleanService: CleanService, private db: AngularFirestore) {
+    searchService.findArtists('dua lipa').subscribe(val => this.save(val));
+
+    let recordings$: Observable<Object[]> = searchService.findArtists('dua lipa').pipe(switchMap(artists => this.save(artists)));
+    recordings$.subscribe(recordings => this.clean(recordings));
   }
 
   save(val: JSON) {
@@ -32,10 +37,10 @@ export class AppComponent {
       }
     });
 
-    this.findService.findRecordings(cleaned['id']).subscribe(val => this.clean(val));
+    return this.searchService.findRecordings(cleaned['id']);
   }
 
-  clean(val: Array<Object>) {
+  clean(val: Object[]) {
     console.log(val)
     this.cleanService.recordings(val);
   }

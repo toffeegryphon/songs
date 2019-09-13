@@ -4,7 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { FindService } from './search.service';
+import { SearchService } from './search.service';
 import { CleanService } from './clean.service';
 
 import { AngularFireModule } from '@angular/fire'
@@ -23,7 +23,7 @@ import { environment } from 'src/environments/environment';
     AngularFirestoreModule
   ],
   providers: [
-    FindService,
+    SearchService,
     CleanService],
   bootstrap: [AppComponent]
 })

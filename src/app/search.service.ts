@@ -18,7 +18,7 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class FindService {
+export class SearchService {
 
   constructor(private http: HttpClient) { }
 
@@ -43,7 +43,7 @@ export class FindService {
     )
   }
 
-  getRecordings(id: string, offset:number = 0, recordings: Array<JSON> = []) {
+  private getRecordings(id: string, offset:number = 0, recordings: Array<JSON> = []) {
     return this.http.get<JSON>(searchRecordings(id, 100, offset), httpOptions);
   }
 }

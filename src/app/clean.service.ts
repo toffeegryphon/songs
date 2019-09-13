@@ -24,6 +24,7 @@ export class CleanService {
 
     // O(n)
     // TODO include which albums they are in
+    // TODO select songs, result which album(s) to buy
     let results: Array<Object> = new Array(dirty.length); // At most equal length
     let set: Set<string> = new Set();
 
