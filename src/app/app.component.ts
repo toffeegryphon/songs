@@ -22,9 +22,7 @@ export class AppComponent {
   artists: AngularFirestoreCollection = this.db.collection('artists');
 
   constructor(private searchService: SearchService, private cleanService: CleanService, private db: AngularFirestore) {
-    // searchService.findArtists('dua lipa').subscribe(val => this.save(val));
-
-    let recordings$: Observable<Object[]> = searchService.findArtists('dua lipa').pipe(switchMap(artists => this.save(artists)));
+    let recordings$: Observable<Object[]> = searchService.artists('dua lipa').pipe(switchMap(artists => this.save(artists)));
     recordings$.subscribe(recordings => this.clean(recordings));
   }
 
@@ -40,7 +38,7 @@ export class AppComponent {
       }
     });
 
-    return this.searchService.findRecordings(cleaned['id']);
+    return this.searchService.recordings(cleaned['id']);
   }
 
   clean(val: Object[]) {

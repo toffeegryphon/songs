@@ -3,10 +3,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Observable } from 'rxjs';
 import { expand, map, reduce } from 'rxjs/operators'
 
-const searchArtists = (query: string, limit: number = 3, offset: number = 0) => 
+const artistsUrl = (query: string, limit: number = 3, offset: number = 0) => 
   `https://musicbrainz.org/ws/2/artist?query=${query}&limit=${limit}&offset=${offset}`;
 
-const searchRecordings = (id: string, limit: number = 100, offset: number = 0) => 
+const recordingsUrl = (id: string, limit: number = 100, offset: number = 0) => 
   `https://musicbrainz.org/ws/2/recording?artist=${id}&limit=${limit}&offset=${offset}`;
 
 const httpOptions = {
@@ -22,28 +22,29 @@ export class SearchService {
 
   constructor(private http: HttpClient) { }
 
-  findArtists(query: string): Observable<JSON> {
+  artists(query: string, limit: number = 3, offset: number = 0): Observable<JSON> {
     query.replace(' ', '%20');
-    return this.http.get<JSON>(searchArtists(query), httpOptions);
+    return this.http.get<JSON>(artistsUrl(query, limit, offset), httpOptions);
+    // TODO Pipe, return solely results
   }
 
   // TODO async: Find and clean page by page. Once page done, add to template
 
-  findRecordings(id: string): Observable<any> {
-    return this.getRecordings(id).pipe(
+  recordings(artistId: string): Observable<Object[]> {
+    return this.getRecordings(artistId).pipe(
       expand(result => {
         if (result['recording-offset'] + 100 < result['recording-count']) {
-          return this.getRecordings(id, result['recording-offset'] + 100)
+          return this.getRecordings(artistId, result['recording-offset'] + 100);
         } else {
-          return []
+          return [];
         }
       })).pipe(
       map(result => result['recordings'])).pipe(
       reduce((acc: Array<Object>, result: Array<Object>) => acc.concat(result), [])
-    )
+    );
   }
 
-  private getRecordings(id: string, offset:number = 0, recordings: Array<JSON> = []) {
-    return this.http.get<JSON>(searchRecordings(id, 100, offset), httpOptions);
+  private getRecordings(id: string, offset:number = 0) {
+    return this.http.get<JSON>(recordingsUrl(id, 100, offset), httpOptions);
   }
 }
