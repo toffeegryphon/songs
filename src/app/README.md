@@ -42,6 +42,22 @@
 `}`
 
 > Note: `code` is the unique identifier. There may be many recordings of the same song under different circumstances (e.g. location), all with their own `id`. The included `id` is just from one of them.
+
+---
+
+### Database (Firebase Firestore)
+
+#### `addArtist(artist: object)`
+
+> Checks if `artist` exists in Database, and adds if it does not.
+
+#### `getArtist(artistId: string): Observable<any>`
+
+> Gets `Observable` artist of `artistId`. Get recordings by subscribing and calling `artist.data().recordings`.
+
+#### `addRecordings(recordings: object[], artistId: string)`
+
+> Adds `recordings` to artist of `artistId`. Uses `filter` to remove recordings that already exist in database, then adds them. (However, it is probably faster and more efficient to just `set(recordings)` straightaway.)
   
 ## Log
 

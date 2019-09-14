@@ -17,6 +17,7 @@ describe('CleanService', () => {
 
   it('should clean up artist Object', () => {
     const service: CleanService = TestBed.get(CleanService);
+    //TODO use a better mock object
     const testArtist: Object = {
       'area' : {},
       'name' : 'Dua Lipa',

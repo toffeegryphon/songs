@@ -10,6 +10,7 @@ import { CleanService } from './clean.service';
 import { AngularFireModule } from '@angular/fire'
 import { AngularFirestoreModule } from '@angular/fire/firestore'
 import { environment } from 'src/environments/environment';
+import { SearchModule } from './search/search.module';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { environment } from 'src/environments/environment';
     AppRoutingModule, 
     HttpClientModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    SearchModule
   ],
   providers: [
     SearchService,

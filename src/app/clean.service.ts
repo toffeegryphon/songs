@@ -31,6 +31,7 @@ export class CleanService {
     // TODO include which albums they are in
     // TODO select songs, result which album(s) to buy
     results = dirty.map(recording => {
+      // BUG**** Only can english characters. Need to include other chars in replace regex
       let title: string = recording['title'].replace(/\(.*\)/g, '').trim();
       let code: string = title.toLowerCase().replace(/\[.*\]/g, '').replace(/\{.*\}/g, '').replace(/[^\w]/g, '');
       if (!set.has(code)) {
