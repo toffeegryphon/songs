@@ -12,12 +12,16 @@ import { switchMap } from 'rxjs/operators';
 })
 export class SearchComponent implements OnInit {
 
+  public recordings: object[];
+  public searching: boolean = false;
+
   constructor(private databaseService: DatabaseService, private cleanService: CleanService, private searchService: SearchService) { }
 
   ngOnInit() {
   }
 
   search(query: string) {
+    this.searching = true;
     console.log(query);
     let artist: object;
 
@@ -26,14 +30,17 @@ export class SearchComponent implements OnInit {
       return this.databaseService.getArtist(artist['id']);
     })).subscribe(doc => {
       if (doc.exists && doc.data().recordings != null) {
-        let recordings: object[] = doc.data().recordings;
-        console.log(recordings);
+        this.searching = false;
+        this.recordings = doc.data().recordings;
+        console.log(this.recordings);
       } else {
         // Faster but unsafe: Run concurrently since search def. slower - NO GO slower than 1 page
         this.databaseService.addArtist(artist).add(() => {
           this.searchService.recordings(artist['id']).subscribe(recordings => {
-            let cleaned: object[] = this.cleanService.recordings(recordings);
-            this.databaseService.addRecordings(cleaned, artist['id']);
+            this.searching = false;
+            this.recordings = this.cleanService.recordings(recordings);
+            this.databaseService.addRecordings(this.recordings, artist['id']);
+            console.log(this.recordings);
           });
         });
       }
