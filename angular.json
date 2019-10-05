@@ -122,8 +122,13 @@
               "devServerTarget": "songs2:serve:production"
             }
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {}
         }
       }
-    }},
+    }
+  },
   "defaultProject": "songs2"
 }
