@@ -1,10 +1,14 @@
-<div>
-<input type="text" placeholder="Artist Name" #query (keyup.enter)='search(query.value)'>
-<button (click)='search(query.value)'>Search</button>
+
+<div class="flex">
+        <h1>find songs by</h1>
+        <div class="flex search">
+            <input class="search" type="text" placeholder="Artist Name" #query (keyup.enter)='search(query.value)'>
+            <button (click)='search(query.value)'><i class="material-icons">search</i></button>
+        </div>
 </div>
 
-<div class="lds-ellipsis" *ngIf='searching'><div></div><div></div><div></div><div></div></div>
+<div class="lds-ellipsis container" *ngIf='searching'><div></div><div></div><div></div><div></div></div>
 
-<table>
-    <tr *ngFor='let recording of recordings'>{{ recording['title'] }}</tr>
+<table class="table">
+    <tr *ngFor='let recording of recordings'><td>{{ recording['title'] }}</td></tr>
 </table>

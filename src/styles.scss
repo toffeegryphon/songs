@@ -1,1 +1,83 @@
 /* You can add global styles to this file, and also import other style files */
+
+$font-default: Bahnschrift;
+$font-family: $font-default, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+$theme: (
+    "grey-light"    : #e6e6e6,
+    "grey-dark"     : #9e9d9d
+);
+
+$colors: (
+    "search"        : map-get($theme, "grey-light"),
+    "placeholder"   : map-get($theme, "grey-dark")
+);
+
+* {
+    font-family: $font-family;
+    margin: auto;
+    // border-style: solid;
+    // border-width: 1px;
+}
+
+app-root {
+    display: block;
+}
+
+//Text
+h1 {
+    text-align: center;
+    white-space: nowrap;
+    padding-top: 0.2em;
+}
+
+//Images
+i {
+    color: map-get($colors, "placeholder");
+}
+
+//Inputs
+button {
+    background-color: transparent;
+    border: 0;
+    padding: 0.5em;
+    margin: 0;
+    line-height: 0;
+    border-left: 1px solid map-get($colors, "placeholder");
+}
+
+input {
+    border: 0;
+    margin: 0.5em;
+}
+
+//Table
+table {
+    text-align: left;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid map-get($colors, "search");
+}
+
+.container {
+    display: block;
+    width: fit-content;
+    text-align: center;
+}
+
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+    width: fit-content;
+    text-align: center;
+}
+
+.search {
+    background: map-get($colors, "search");
+}
+
+::placeholder {
+    color: map-get($colors, "placeholder");
+}

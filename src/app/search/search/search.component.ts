@@ -21,6 +21,10 @@ export class SearchComponent implements OnInit {
   }
 
   search(query: string) {
+    if (query == "") {
+      return;
+    }
+
     this.searching = true;
     console.log(query);
     let artist: object;
