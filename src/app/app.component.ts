@@ -9,7 +9,7 @@ import { DatabaseService } from './database.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.sass'],
+  styleUrls: ['./app.component.scss'],
   providers: [
     SearchService, 
     CleanService]
