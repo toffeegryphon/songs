@@ -5,6 +5,9 @@
             <input class="search" type="text" placeholder="Artist Name" #query (keyup.enter)='search(query.value)'>
             <button (click)='search(query.value)'><i class="material-icons">search</i></button>
         </div>
+        <div class="refresh">
+            <button (click)="refresh()"><i class="material-icons">refresh</i></button>
+        </div>
 </div>
 
 <div class="lds-ellipsis container" *ngIf='searching'><div></div><div></div><div></div><div></div></div>

@@ -12,6 +12,7 @@ import { switchMap } from 'rxjs/operators';
 })
 export class SearchComponent implements OnInit {
 
+  public artistId: string;
   public recordings: object[];
   public searching: boolean = false;
 
@@ -21,7 +22,7 @@ export class SearchComponent implements OnInit {
   }
 
   search(query: string) {
-    if (query == "") {
+    if (!query || this.searching) {
       return;
     }
 
@@ -31,23 +32,36 @@ export class SearchComponent implements OnInit {
 
     this.searchService.artists(query).pipe(switchMap(results => {
       artist = this.cleanService.artist(results['artists'][0]);
-      return this.databaseService.getArtist(artist['id']);
+      this.artistId = artist['id']
+      return this.databaseService.getArtist(this.artistId);
     })).subscribe(doc => {
       if (doc.exists && doc.data().recordings != null) {
-        this.searching = false;
         this.recordings = doc.data().recordings;
         console.log(this.recordings);
       } else {
         // Faster but unsafe: Run concurrently since search def. slower - NO GO slower than 1 page
         this.databaseService.addArtist(artist).add(() => {
-          this.searchService.recordings(artist['id']).subscribe(recordings => {
-            this.searching = false;
+          this.searchService.recordings(this.artistId).subscribe(recordings => {
             this.recordings = this.cleanService.recordings(recordings);
-            this.databaseService.addRecordings(this.recordings, artist['id']);
+            this.databaseService.addRecordings(this.recordings, this.artistId);
             console.log(this.recordings);
           });
         });
       }
+      this.searching = false
     });
+  }
+
+  refresh() {
+    console.log('refresh')
+    if (!this.artistId || this.searching) return
+    console.log('refreshing')
+    this.searching = true
+
+    this.searchService.recordings(this.artistId).subscribe(recordings => {
+      this.recordings = this.cleanService.recordings(recordings)
+      this.databaseService.addRecordings(this.recordings, this.artistId)
+      this.searching = false
+    })
   }
 }

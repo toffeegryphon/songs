@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Observable, observable } from 'rxjs';
+import { firestore } from 'firebase';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +41,7 @@ export class DatabaseService {
       if (doc.exists) {
         let existingRecordings: object[] = doc.data().recordings;
         // TODO: probably should just set all
-        if (existingRecordings == null) {
+        if (!existingRecordings) {
           console.log('Adding all...');
           this.artists.doc(artistId).update({
             'recordings': recordings,
@@ -49,10 +50,21 @@ export class DatabaseService {
         } else {
           // Maybe got better way?
           console.log('Adding some...?');
-          if (recordings.length != existingRecordings.length) {
-            let newRecordings: object[];
-            recordings.filter(recording => !existingRecordings.includes(recording))
-            console.log(newRecordings);
+          if (recordings.length > existingRecordings.length) {
+            console.log(recordings)
+            console.log(existingRecordings)
+            // Probably can do a better find
+            // Maybe get array of ids first
+            const newRecordings = recordings.filter(
+              (recording) => !existingRecordings.find(
+                (existingRecording) => existingRecording['code'] === recording['code']
+              )
+            )
+            console.log(newRecordings)
+            this.artists.doc(artistId).update({
+              'recordings': firestore.FieldValue.arrayUnion(...newRecordings),
+              'recordings-count': recordings.length
+            })
           }
         }
       } else {
