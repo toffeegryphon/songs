@@ -10,14 +10,14 @@ export class CleanService {
 
   // Clean up artist JSON to return artist object with only required fields.
   artist(dirty: JSON): Object {
-    console.log(dirty);
+    // console.log(dirty);
 
     let cleaned = {
       'id' : dirty['id'],
       'name' : dirty['name']
     };
 
-    console.log(cleaned);
+    // console.log(cleaned);
     return cleaned;
   }
 

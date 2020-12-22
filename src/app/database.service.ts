@@ -18,15 +18,15 @@ export class DatabaseService {
     let result = this.artists.doc(artist['id']).get().subscribe(doc => {
       if (!doc.exists) {
         this.artists.doc(artist['id']).set(artist).then(() => result.unsubscribe());
-        console.log('DatabaseService: Added');
+        // console.log('DatabaseService: Added');
         return 1;
       } else {
-        console.log('DatabaseService: Already Exists');
+        // console.log('DatabaseService: Already Exists');
         result.unsubscribe();
         return 0;
       }
     }, () => {
-      console.log('DatabaseService: Error');
+      // console.log('DatabaseService: Error');
       return -1
     });
     return result;
@@ -42,17 +42,17 @@ export class DatabaseService {
         let existingRecordings: object[] = doc.data().recordings;
         // TODO: probably should just set all
         if (!existingRecordings) {
-          console.log('Adding all...');
+          // console.log('Adding all...');
           this.artists.doc(artistId).update({
             'recordings': recordings,
             'recording-count': recordings.length
           });
         } else {
           // Maybe got better way?
-          console.log('Adding some...?');
+          // console.log('Adding some...?');
           if (recordings.length > existingRecordings.length) {
-            console.log(recordings)
-            console.log(existingRecordings)
+            // console.log(recordings)
+            // console.log(existingRecordings)
             // Probably can do a better find
             // Maybe get array of ids first
             const newRecordings = recordings.filter(
@@ -60,7 +60,7 @@ export class DatabaseService {
                 (existingRecording) => existingRecording['code'] === recording['code']
               )
             )
-            console.log(newRecordings)
+            // console.log(newRecordings)
             this.artists.doc(artistId).update({
               'recordings': firestore.FieldValue.arrayUnion(...newRecordings),
               'recordings-count': recordings.length

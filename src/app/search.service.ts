@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Observable } from 'rxjs';
-import { expand, map, reduce } from 'rxjs/operators'
+import { expand, last, map, reduce } from 'rxjs/operators'
 
 const artistsUrl = (query: string, limit: number = 3, offset: number = 0) => 
   `https://musicbrainz.org/ws/2/artist?query=${query}&limit=${limit}&offset=${offset}`;
@@ -21,6 +21,10 @@ const httpOptions = {
 export class SearchService {
 
   constructor(private http: HttpClient) { }
+
+  post(lastSearched: string): Observable<string> {
+    return this.http.post<string>('/', lastSearched);
+  }
 
   artists(query: string, limit: number = 3, offset: number = 0): Observable<JSON> {
     query.replace(' ', '%20');
