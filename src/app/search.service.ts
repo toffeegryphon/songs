@@ -35,13 +35,19 @@ export class SearchService {
   recordings(artistId: string): Observable<Object[]> { 
     // TODO Definitely need better retry strategy
     // If fail, should upload sucess first before retrying others
+    let isError = false
     return this.getRecordings(artistId).pipe(
       expand(result => {
-        if (result['recording-offset'] + 100 < result['recording-count']) {
+        if (!isError && result['recording-offset'] + 100 < result['recording-count']) {
           return this.getRecordings(artistId, result['recording-offset'] + 100);
         } else {
           return [];
         }
+      }),
+      catchError((err, caught) => {
+        // TODO Write better way, also continue from failed/remember where to continue
+        isError = true
+        return caught
       }),
       map(result => {
         console.log(result)
@@ -53,7 +59,7 @@ export class SearchService {
 
   private getRecordings(id: string, offset:number = 0) {
     return this.http.get<JSON>(recordingsUrl(id, 100, offset), httpOptions).pipe(
-      this.delayedRetry(1000, 2)
+      this.delayedRetry(1000, 0)
     )
   }
 
